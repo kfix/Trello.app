@@ -15,4 +15,7 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (retain, nonatomic) IBOutlet WebView *webview;
 
+-(BOOL)route_link:(NSURL *)url;
+-(void)background_link:(NSURL *)url;
+
 @end
