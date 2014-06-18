@@ -11,15 +11,34 @@
 
 @synthesize window = _window;
 @synthesize webview;
+WebInspector *_inspector;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+}
+
+- (void)awakeFromNib {
+    //enable WebKit Inspector
+    [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"WebKitDeveloperExtras"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    //userscript loader
+    NSString *resourcesPath = [[NSBundle mainBundle] resourcePath];
+    NSString *jsPath = [resourcesPath stringByAppendingString:@"/userscripts/loader.js"];
+    
     NSString *urlAddress = @"https://www.trello.com/login";
     
     NSURL *url = [NSURL URLWithString:urlAddress];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
     
+    //need proper user-agent for Trello's JS to enable drag-n-drop attach's
+    [webview setCustomUserAgent:@"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_9_3; en-us) AppleWebKit/537.76.4 (KHTML, like Gecko) Version/7.0.4 Safari/537.76.4"];
+    //[webview setApplicationNameForUserAgent:@"Safari"];
+    
     [[webview mainFrame] loadRequest:requestObj];
+}
+
+- (IBAction)reloadPage:(id)sender {
+    [webview reload:sender];
 }
 
 -(BOOL)route_link:(NSURL *)url
@@ -76,6 +95,12 @@ decisionListener:(id <WebPolicyDecisionListener>)listener
         NSArray* files = [[openDlg URLs]valueForKey:@"relativePath"];
         [resultListener chooseFilenames:files];
     }
+}
+
+- (IBAction)showInspector:(id)x {
+    _inspector = [WebInspector.alloc initWithWebView:webview];
+    [_inspector      detach:webview];
+    [_inspector showConsole:webview];
 }
 
 @end

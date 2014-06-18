@@ -14,8 +14,17 @@
 
 @property (assign) IBOutlet NSWindow *window;
 @property (retain, nonatomic) IBOutlet WebView *webview;
+- (IBAction)reloadPage:(id)sender;
+- (IBAction)showInspector:(id)sender;
 
 -(BOOL)route_link:(NSURL *)url;
 -(void)background_link:(NSURL *)url;
 
+@end
+
+@interface WebInspector : NSObject  { WebView *_webView; }
+- (id)initWithWebView:(WebView *)webView;
+- (void)detach:     (id)sender;
+- (void)show:       (id)sender;
+- (void)showConsole:(id)sender;
 @end
